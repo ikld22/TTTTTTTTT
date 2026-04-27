@@ -2,6 +2,36 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
+/* ─── Thmanyah Sans — Arabic ─────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('fonts/thmanyahsans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('fonts/thmanyahsans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('fonts/thmanyahsans-Bold.woff2') format('woff2');
+  font-weight: 600 700;
+  font-style: normal;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('fonts/thmanyahsans-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
 /* ─── Theme tokens ───────────────────────────────────────────────────────────── */
 
 :root {
@@ -26,8 +56,8 @@
   --yellow:     #b89a3a;
   --yellow-bg:  #f0ecda;
   --sidebar-w:  240px;
-  --serif:      'Cormorant Garamond', Georgia, serif;
-  --sans:       'DM Sans', system-ui, sans-serif;
+  --serif:      'Cormorant Garamond', 'Thmanyah Sans', Georgia, serif;
+  --sans:       'DM Sans', 'Thmanyah Sans', system-ui, sans-serif;
   --r:          6px;
   --r2:         10px;
   --shadow:     0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
@@ -524,7 +554,7 @@ html, body, #root {
   letter-spacing: -0.2px;
 }
 .section-count {
-  font-size: 12px;
+  font-size: 15px;
   color: var(--ink4);
   font-weight: 500;
 }
@@ -555,7 +585,7 @@ html, body, #root {
 }
 .today-lede {
   margin-top: 10px;
-  font-size: 14px;
+  font-size: 17px;
   color: var(--ink3);
   max-width: 440px;
   line-height: 1.6;
