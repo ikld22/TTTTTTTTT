@@ -408,7 +408,7 @@ function CalendarView({ tasks, projects, onSelect }) {
 }
 
 // ─── PROJECTS VIEW ─────────────────────────────────────────────────────────────
-function ProjectsView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect }) {
+function ProjectsView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect, onNewProject }) {
   const [selectedId, setSelectedId] = useState(projects[0]?.id);
   const [board, setBoard] = useState(true);
 
@@ -429,7 +429,10 @@ function ProjectsView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSele
 
       {/* ── Rail ── */}
       <aside className="proj-rail">
-        <div className="proj-rail-label">Projects</div>
+        <div className="proj-rail-label" style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          Projects
+          <button onClick={onNewProject} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--ink4)', fontSize:18, lineHeight:1, padding:'0 2px' }} title="New project">+</button>
+        </div>
         {projects.map(p => {
           const pt = tasks.filter(t => t.projectId === p.id);
           const pp = pt.length ? Math.round((pt.filter(t=>t.status==='done').length/pt.length)*100) : 0;

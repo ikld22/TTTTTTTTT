@@ -28,6 +28,7 @@ function CadenceApp({ tweakValues }) {
   const [view, setView] = useState('today');
   const [selectedTask, setSelectedTask] = useState(null);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [showAddProject, setShowAddProject] = useState(false);
 
   // Persist to localStorage whenever tasks/projects change
   useEffect(() => { saveState(tasks, projects); }, [tasks, projects]);
@@ -98,6 +99,10 @@ function CadenceApp({ tweakValues }) {
     updateTasks(tasks => [task, ...tasks]);
   }, [updateTasks]);
 
+  const handleAddProject = useCallback((project) => {
+    setState(prev => ({ ...prev, projects: [...prev.projects, project] }));
+  }, []);
+
   const handleSelect = useCallback((task) => {
     setSelectedTask(prev => prev?.id === task.id ? null : task);
   }, []);
@@ -119,6 +124,7 @@ function CadenceApp({ tweakValues }) {
     onStar: handleStar,
     onSubtaskCheck: handleSubtaskCheck,
     onSelect: handleSelect,
+    onNewProject: () => setShowAddProject(true),
     taskStyle,
   };
 
@@ -151,7 +157,10 @@ function CadenceApp({ tweakValues }) {
             );
           })}
 
-          <div className="nav-section" style={{ marginTop: 20 }}>Projects</div>
+          <div className="nav-section" style={{ marginTop: 20, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            Projects
+            <button onClick={() => setShowAddProject(true)} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--ink4)', fontSize:16, lineHeight:1, padding:'0 2px' }} title="New project">+</button>
+          </div>
           {projects.map(p => (
             <button
               key={p.id}
@@ -234,6 +243,14 @@ function CadenceApp({ tweakValues }) {
           projects={projects}
           onAdd={handleAddTask}
           onClose={() => setShowQuickAdd(false)}
+        />
+      )}
+
+      {/* Add project modal */}
+      {showAddProject && (
+        <AddProjectModal
+          onAdd={handleAddProject}
+          onClose={() => setShowAddProject(false)}
         />
       )}
     </div>

@@ -18,18 +18,13 @@ function loadState() {
     const raw = localStorage.getItem('cadence_state');
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Merge stored projects with DEFAULT_PROJECTS to pick up new fields
-      const mergedProjects = DEFAULT_PROJECTS.map(def => {
-        const stored = (parsed.projects || []).find(p => p.id === def.id);
-        return stored ? { ...def, ...stored } : def;
-      });
       return {
-        tasks: parsed.tasks || DEFAULT_TASKS,
-        projects: mergedProjects,
+        tasks: parsed.tasks || [],
+        projects: parsed.projects || [],
       };
     }
   } catch (e) {}
-  return { tasks: DEFAULT_TASKS, projects: DEFAULT_PROJECTS };
+  return { tasks: [], projects: [] };
 }
 
 function saveState(tasks, projects) {

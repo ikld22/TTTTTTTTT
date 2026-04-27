@@ -336,4 +336,70 @@ function QuickAddModal({ projects, onAdd, onClose }) {
   );
 }
 
-Object.assign(window, { TaskItem, RhythmBar, DetailPanel, QuickAddModal, weightColor });
+// ─── AddProjectModal ───────────────────────────────────────────────────────────
+function AddProjectModal({ onAdd, onClose }) {
+  const COLORS = ['#c17b4e','#5a7fa3','#7a6ea0','#4a8c6f','#b85555','#b89a3a','#3a8f8a','#8a5a8f'];
+  const [name, setName] = useState('');
+  const [icon, setIcon] = useState('📁');
+  const [color, setColor] = useState(COLORS[0]);
+  const [desc, setDesc] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    onAdd({
+      id: 'p' + Date.now(),
+      name: name.trim(),
+      icon,
+      color,
+      description: desc.trim(),
+      deadline: null,
+      deadlineLabel: null,
+      milestones: [],
+      targetScore: null,
+    });
+    onClose();
+  };
+
+  return (
+    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <form className="quick-add fade-in" onSubmit={handleSubmit} style={{ maxWidth: 420 }}>
+        <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 14 }}>New Project</div>
+        <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+          <input
+            value={icon}
+            onChange={e => setIcon(e.target.value)}
+            maxLength={2}
+            style={{ width: 52, textAlign: 'center', fontSize: 22, padding: '6px 4px', border: '1px solid var(--border)', borderRadius: 'var(--r)', background: 'var(--surface)', fontFamily: 'var(--sans)' }}
+          />
+          <input
+            className="quick-add-input"
+            placeholder="Project name…"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            autoFocus
+            style={{ flex: 1 }}
+          />
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+          {COLORS.map(c => (
+            <button key={c} type="button" onClick={() => setColor(c)}
+              style={{ width: 26, height: 26, borderRadius: '50%', background: c, border: color === c ? '3px solid var(--ink)' : '3px solid transparent', cursor: 'pointer' }} />
+          ))}
+        </div>
+        <textarea
+          placeholder="Description (optional)"
+          value={desc}
+          onChange={e => setDesc(e.target.value)}
+          style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 'var(--r)', background: 'var(--surface)', fontFamily: 'var(--sans)', fontSize: 13, resize: 'vertical', minHeight: 60, marginBottom: 12, boxSizing: 'border-box' }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+          <button type="button" className="btn btn-sm" onClick={onClose}>Cancel</button>
+          <button type="submit" className="btn btn-primary btn-sm">Add Project</button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+Object.assign(window, { TaskItem, RhythmBar, DetailPanel, QuickAddModal, AddProjectModal, weightColor });
