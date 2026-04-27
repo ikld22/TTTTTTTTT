@@ -124,6 +124,7 @@ html, body, #root {
   background: var(--bg);
   color: var(--ink);
   font-size: 14px;
+  font-weight: 600;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
