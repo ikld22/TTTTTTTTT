@@ -306,45 +306,77 @@ function QuickAddModal({ projects, onAdd, onClose }) {
     if (e.key === 'Escape') onClose();
   };
 
+  const selectedProject = projects.find(p => p.id === projectId);
+
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <form className="quick-add fade-in" onSubmit={handleSubmit}>
+      <form className="tam fade-in" onSubmit={handleSubmit}>
+
+        {/* ── Project row ── */}
+        <div className="tam-projects">
+          {projects.map(p => (
+            <button key={p.id} type="button"
+              className={`tam-proj ${projectId === p.id ? 'active' : ''}`}
+              onClick={() => setProjectId(p.id)}>
+              <span className="tam-proj-dot" style={{ background: p.color }} />
+              {p.name}
+            </button>
+          ))}
+          <button type="button" className="tam-x" onClick={onClose}>×</button>
+        </div>
+
+        {/* ── Title ── */}
         <input
-          className="quick-add-input"
-          placeholder="New task…"
+          className="tam-title"
+          placeholder="What needs to be done?"
           value={title}
           onChange={e => setTitle(e.target.value)}
           onKeyDown={handleKey}
           autoFocus
         />
-        <div className="quick-add-footer">
-          <select className="qa-select" value={projectId} onChange={e => setProjectId(e.target.value)}>
-            {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-          <select className="qa-select" value={priority} onChange={e => setPriority(e.target.value)}>
-            <option value="high">↑ High</option>
-            <option value="medium">· Medium</option>
-            <option value="low">↓ Low</option>
-          </select>
-          <input
-            className="qa-select"
-            type="date"
-            value={due}
-            onChange={e => setDue(e.target.value)}
-            style={{ fontFamily: 'var(--sans)' }}
-          />
-          <div style={{ display:'flex', gap:3 }}>
-            {['work','personal'].map(t => (
-              <button key={t} type="button"
-                className={`pill btn-sm ${taskType === t ? 'active' : ''}`}
-                onClick={() => setTaskType(t)}
-                style={{ padding:'3px 9px', fontSize:11 }}
-              >{t}</button>
-            ))}
-          </div>
-          <span className="quick-add-hint" style={{ marginLeft:'auto' }}><kbd>↵</kbd> to add · <kbd>Esc</kbd> to close</span>
-          <button type="submit" className="btn btn-primary btn-sm">Add</button>
+
+        {/* ── Meta row ── */}
+        <div className="tam-meta">
+
+          {/* Due date */}
+          <label className="tam-meta-btn">
+            <span style={{ opacity: due ? 1 : 0.45 }}>◷</span>
+            <input type="date" value={due} onChange={e => setDue(e.target.value)}
+              className="tam-date" />
+          </label>
+
+          <div className="tam-divider" />
+
+          {/* Priority */}
+          {[
+            { v:'high',   label:'↑ High', color:'var(--red)'    },
+            { v:'medium', label:'· Med',  color:'var(--yellow)' },
+            { v:'low',    label:'↓ Low',  color:'var(--ink4)'   },
+          ].map(p => (
+            <button key={p.v} type="button"
+              className={`tam-meta-btn ${priority === p.v ? 'active' : ''}`}
+              onClick={() => setPriority(p.v)}
+              style={priority === p.v ? { color: p.color } : {}}>
+              {p.label}
+            </button>
+          ))}
+
+          <div className="tam-divider" />
+
+          {/* Type */}
+          {['work','personal'].map(t => (
+            <button key={t} type="button"
+              className={`tam-type tam-type-${t} ${taskType === t ? 'active' : ''}`}
+              onClick={() => setTaskType(t)}>
+              {t}
+            </button>
+          ))}
+
+          <button type="submit" className="tam-submit" disabled={!title.trim()}>
+            Add task ↵
+          </button>
         </div>
+
       </form>
     </div>
   );

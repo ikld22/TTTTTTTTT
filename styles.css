@@ -1,6 +1,6 @@
 /* ─── Cadence — Editorial Task Manager ───────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
 /* ─── Thmanyah Sans — Arabic ─────────────────────────────────────────────────── */
 @font-face {
@@ -124,7 +124,7 @@ html, body, #root {
   background: var(--bg);
   color: var(--ink);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -884,34 +884,154 @@ html, body, #root {
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex; align-items: flex-start; justify-content: center;
-  padding-top: 120px;
+  padding-top: 110px;
 }
-.quick-add {
+
+/* Task Add Modal */
+.tam {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r2);
   box-shadow: var(--shadow2);
-  width: 560px;
-  max-width: 90vw;
+  width: 580px;
+  max-width: 92vw;
   overflow: hidden;
 }
-.quick-add-input {
-  width: 100%;
-  padding: 18px 20px;
-  font-size: 17px;
-  font-family: var(--serif);
+.tam-projects {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  overflow-x: auto;
+}
+.tam-proj {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink4);
+  font-family: var(--sans);
+  transition: all 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tam-proj:hover { color: var(--ink); background: var(--bg3); }
+.tam-proj.active { color: var(--ink); background: var(--surface); border-color: var(--border2); }
+.tam-proj-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tam-x {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: none;
   border: none;
-  background: transparent;
+  cursor: pointer;
+  color: var(--ink4);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 4px;
+  transition: color 0.12s;
+}
+.tam-x:hover { color: var(--ink); }
+.tam-title {
+  display: block;
+  width: 100%;
+  padding: 22px 20px 18px;
+  font-family: var(--serif);
+  font-size: 21px;
   color: var(--ink);
+  background: none;
+  border: none;
   outline: none;
+  line-height: 1.35;
 }
-.quick-add-input::placeholder { color: var(--ink4); }
-.quick-add-footer {
-  display: flex; align-items: center;
-  padding: 10px 16px;
+.tam-title::placeholder { color: var(--ink4); font-style: italic; }
+.tam-meta {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 14px 12px;
   border-top: 1px solid var(--border);
-  gap: 8px;
+  flex-wrap: wrap;
 }
+.tam-meta-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: var(--r);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink4);
+  font-family: var(--sans);
+  transition: all 0.12s;
+}
+.tam-meta-btn:hover { background: var(--bg2); color: var(--ink); }
+.tam-meta-btn.active { background: var(--bg2); color: var(--ink); }
+.tam-date {
+  border: none;
+  background: none;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink3);
+  cursor: pointer;
+  outline: none;
+  max-width: 120px;
+}
+.tam-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+.tam-type {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink4);
+  font-family: var(--sans);
+  transition: all 0.12s;
+}
+.tam-type:hover { background: var(--bg2); }
+.tam-type-work.active    { color: var(--accent2); background: var(--accent2-bg); border-color: var(--accent2); }
+.tam-type-personal.active { color: var(--green);   background: var(--green-bg);   border-color: var(--green);   }
+.tam-submit {
+  margin-left: auto;
+  padding: 7px 16px;
+  border-radius: var(--r);
+  border: none;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.12s;
+  white-space: nowrap;
+}
+.tam-submit:hover { opacity: 0.85; }
+.tam-submit:disabled { opacity: 0.35; cursor: default; }
+
+/* keep qa-select for AddProjectModal */
 .qa-select {
   padding: 5px 10px;
   border: 1px solid var(--border);
@@ -925,7 +1045,6 @@ html, body, #root {
 .quick-add-hint {
   font-size: 11px;
   color: var(--ink4);
-  margin-left: auto;
 }
 
 /* ─── Detail panel ───────────────────────────────────────────────────────────── */
