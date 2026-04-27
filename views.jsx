@@ -13,7 +13,6 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
   const focusPool  = modeTasks.length ? modeTasks : todayTasks;
   const focusTask  = [...focusPool].sort((a, b) => urgencyScore(b) - urgencyScore(a))[0];
 
-  const daysToExam = daysUntil('2026-05-14');
   const doneTasks = tasks.filter(t => t.status === 'done');
   const streak = 4; // computed would need real history
 
@@ -41,7 +40,6 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
         <p className="today-lede">
           {todayTasks.length} task{todayTasks.length !== 1 ? 's' : ''} flagged for today
           {overdueTasks.length > 0 ? `, ${overdueTasks.length} overdue` : ''}.
-          {daysToExam !== null ? ` IELTS in ${daysToExam} days.` : ''}
         </p>
       </div>
 
@@ -70,11 +68,6 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
 
       {/* Insights */}
       <div className="insights-row">
-        <div className="insight-card">
-          <div className="insight-value accent">{daysToExam}</div>
-          <div className="insight-label">Days to IELTS</div>
-          <div className="insight-sub">May 14 · British Council</div>
-        </div>
         <div className="insight-card">
           <div className={`insight-value ${overdueTasks.length > 0 ? 'red' : 'green'}`}>{overdueTasks.length}</div>
           <div className="insight-label">Overdue</div>
