@@ -447,9 +447,9 @@ function AICoach({ tasks, projects }) {
     if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
   }, [msgs, loading]);
 
-  // Auto-ask once on mount if key already saved
+  // Auto-ask once on mount if key exists (config.js or localStorage)
   React.useEffect(() => {
-    if (localStorage.getItem('ds_key')) sendMsg('What should I focus on right now?', []);
+    if (window.DEEPSEEK_KEY || localStorage.getItem('ds_key')) sendMsg('What should I focus on right now?', []);
   }, []);
 
   const buildContext = () => {

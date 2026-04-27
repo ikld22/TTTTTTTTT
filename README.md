@@ -13,18 +13,25 @@ A personal task manager built for focus — not just tracking.
 
 ## Setup
 
-1. Clone the repo and open `index.html` in your browser — no build step needed.
+No build step — just open `index.html` in your browser.
 
-2. To enable the AI Focus Coach, create a `config.js` file in the root:
+## AI Focus Coach
+
+The coach reads your task list and tells you which one to work on right now.
+
+**How to connect:**
+
+1. Get a free API key at [platform.deepseek.com](https://platform.deepseek.com) → API Keys
+2. Open the app → Today → enter your key in the Focus Coach card → Connect
+3. The key is saved in your browser — you only do this once per device
+
+**Running locally?** Create a `config.js` file in the root to skip the setup step:
 
 ```js
 window.DEEPSEEK_KEY = 'sk-your-key-here';
 ```
 
-Get your key at [platform.deepseek.com](https://platform.deepseek.com) → API Keys.
-
-> `config.js` is gitignored and will never be committed.
-> If no `config.js` is present, you can enter the key manually inside the app.
+> `config.js` is gitignored and will never be pushed to GitHub.
 
 ## Stack
 
