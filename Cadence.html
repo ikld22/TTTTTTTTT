@@ -95,8 +95,9 @@
 <body>
   <div id="root"></div>
 
-  <!-- API keys config -->
-  <script src="config.js"></script>
+  <!-- API keys config (gitignored — safe to store your key here locally) -->
+  <script>window.DEEPSEEK_KEY = '';</script>
+  <script src="config.js" onerror="void 0"></script>
 
   <!-- Data + helpers (plain JS, sets window globals) -->
   <script src="data.js"></script>
