@@ -1031,7 +1031,35 @@ html, body, #root {
 .tam-submit:hover { opacity: 0.85; }
 .tam-submit:disabled { opacity: 0.35; cursor: default; }
 
-/* keep qa-select for AddProjectModal */
+/* ─── Add Project Modal (uses quick-add shell) ───────────────────────────────── */
+.quick-add {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  box-shadow: var(--shadow2);
+  width: 560px;
+  max-width: 90vw;
+  overflow: hidden;
+}
+.quick-add-input {
+  width: 100%;
+  padding: 18px 20px;
+  font-size: 17px;
+  font-family: var(--serif);
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  outline: none;
+}
+.quick-add-input::placeholder { color: var(--ink4); }
+.quick-add-footer {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+}
+
 .qa-select {
   padding: 5px 10px;
   border: 1px solid var(--border);

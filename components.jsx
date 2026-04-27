@@ -277,7 +277,7 @@ function DetailPanel({ task, project, onClose, onCheck, onStar, onSubtaskCheck }
 // ─── QuickAdd modal ────────────────────────────────────────────────────────────
 function QuickAddModal({ projects, onAdd, onClose }) {
   const [title, setTitle] = useState('');
-  const [projectId, setProjectId] = useState(projects[0]?.id || '');
+  const [projectId, setProjectId] = useState('');
   const [priority, setPriority] = useState('medium');
   const [due, setDue] = useState('');
   const [taskType, setTaskType] = useState(getTimeMode);
@@ -314,6 +314,11 @@ function QuickAddModal({ projects, onAdd, onClose }) {
 
         {/* ── Project row ── */}
         <div className="tam-projects">
+          <button type="button"
+            className={`tam-proj ${projectId === '' ? 'active' : ''}`}
+            onClick={() => setProjectId('')}>
+            No project
+          </button>
           {projects.map(p => (
             <button key={p.id} type="button"
               className={`tam-proj ${projectId === p.id ? 'active' : ''}`}
