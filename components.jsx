@@ -363,14 +363,16 @@ function AddProjectModal({ onAdd, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <form className="quick-add fade-in" onSubmit={handleSubmit} style={{ maxWidth: 420 }}>
-        <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 14 }}>New Project</div>
-        <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+      <form className="quick-add fade-in" onSubmit={handleSubmit}>
+
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'center', gap:10, padding:'16px 20px 14px', borderBottom:'1px solid var(--border)' }}>
           <input
             value={icon}
             onChange={e => setIcon(e.target.value)}
             maxLength={2}
-            style={{ width: 52, textAlign: 'center', fontSize: 22, padding: '6px 4px', border: '1px solid var(--border)', borderRadius: 'var(--r)', background: 'var(--surface)', fontFamily: 'var(--sans)' }}
+            title="Icon"
+            style={{ width:40, textAlign:'center', fontSize:20, border:'1px solid var(--border)', borderRadius:'var(--r)', background:'var(--bg2)', color:'var(--ink)', fontFamily:'var(--sans)', padding:'4px 0', cursor:'text' }}
           />
           <input
             className="quick-add-input"
@@ -378,25 +380,30 @@ function AddProjectModal({ onAdd, onClose }) {
             value={name}
             onChange={e => setName(e.target.value)}
             autoFocus
-            style={{ flex: 1 }}
+            style={{ padding:'0', fontSize:17, flex:1 }}
           />
         </div>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-          {COLORS.map(c => (
-            <button key={c} type="button" onClick={() => setColor(c)}
-              style={{ width: 26, height: 26, borderRadius: '50%', background: c, border: color === c ? '3px solid var(--ink)' : '3px solid transparent', cursor: 'pointer' }} />
-          ))}
-        </div>
+
+        {/* Description */}
         <textarea
           placeholder="Description (optional)"
           value={desc}
           onChange={e => setDesc(e.target.value)}
-          style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 'var(--r)', background: 'var(--surface)', fontFamily: 'var(--sans)', fontSize: 13, resize: 'vertical', minHeight: 60, marginBottom: 12, boxSizing: 'border-box' }}
+          style={{ display:'block', width:'100%', padding:'14px 20px', border:'none', borderBottom:'1px solid var(--border)', background:'transparent', fontFamily:'var(--sans)', fontSize:13, color:'var(--ink)', resize:'none', outline:'none', minHeight:72, boxSizing:'border-box' }}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-          <button type="button" className="btn btn-sm" onClick={onClose}>Cancel</button>
-          <button type="submit" className="btn btn-primary btn-sm">Add Project</button>
+
+        {/* Footer: colors + actions */}
+        <div className="quick-add-footer">
+          <div style={{ display:'flex', gap:7, alignItems:'center' }}>
+            {COLORS.map(c => (
+              <button key={c} type="button" onClick={() => setColor(c)}
+                style={{ width:18, height:18, borderRadius:'50%', background:c, border: color===c ? '2px solid var(--ink)' : '2px solid transparent', outline: color===c ? '2px solid '+c : 'none', outlineOffset:2, cursor:'pointer', flexShrink:0, padding:0 }} />
+            ))}
+          </div>
+          <span className="quick-add-hint"><kbd>Esc</kbd> to close</span>
+          <button type="submit" className="btn btn-primary btn-sm" style={{ marginLeft:'auto' }}>Add Project</button>
         </div>
+
       </form>
     </div>
   );
