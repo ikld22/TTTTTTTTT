@@ -52,6 +52,9 @@ function TaskItem({ task, project, onCheck, onStar, onSubtaskCheck, onSelect, sh
           {task.priority !== 'medium' && (
             <span className={`task-priority ${task.priority}`}>{task.priority}</span>
           )}
+          {task.type && (
+            <span className={`task-type-tag task-type-tag-${task.type}`}>{task.type}</span>
+          )}
           {task.subtasks && task.subtasks.length > 0 && (
             <span style={{ fontSize: 11, color: 'var(--ink4)' }}>
               {task.subtasks.filter(s => s.done).length}/{task.subtasks.length}
@@ -277,6 +280,7 @@ function QuickAddModal({ projects, onAdd, onClose }) {
   const [projectId, setProjectId] = useState(projects[0]?.id || '');
   const [priority, setPriority] = useState('medium');
   const [due, setDue] = useState('');
+  const [taskType, setTaskType] = useState(getTimeMode);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -289,6 +293,7 @@ function QuickAddModal({ projects, onAdd, onClose }) {
       priority,
       due: due || null,
       today: false,
+      type: taskType,
       weight: priority === 'high' ? 8 : priority === 'medium' ? 5 : 3,
       notes: '',
       subtasks: [],
@@ -328,8 +333,17 @@ function QuickAddModal({ projects, onAdd, onClose }) {
             onChange={e => setDue(e.target.value)}
             style={{ fontFamily: 'var(--sans)' }}
           />
-          <span className="quick-add-hint"><kbd>↵</kbd> to add · <kbd>Esc</kbd> to close</span>
-          <button type="submit" className="btn btn-primary btn-sm" style={{ marginLeft: 'auto' }}>Add</button>
+          <div style={{ display:'flex', gap:3 }}>
+            {['work','personal'].map(t => (
+              <button key={t} type="button"
+                className={`pill btn-sm ${taskType === t ? 'active' : ''}`}
+                onClick={() => setTaskType(t)}
+                style={{ padding:'3px 9px', fontSize:11 }}
+              >{t}</button>
+            ))}
+          </div>
+          <span className="quick-add-hint" style={{ marginLeft:'auto' }}><kbd>↵</kbd> to add · <kbd>Esc</kbd> to close</span>
+          <button type="submit" className="btn btn-primary btn-sm">Add</button>
         </div>
       </form>
     </div>
@@ -343,6 +357,7 @@ function AddProjectModal({ onAdd, onClose }) {
   const [icon, setIcon] = useState('📁');
   const [color, setColor] = useState(COLORS[0]);
   const [desc, setDesc] = useState('');
+  const [projType, setProjType] = useState(getTimeMode);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -352,6 +367,7 @@ function AddProjectModal({ onAdd, onClose }) {
       name: name.trim(),
       icon,
       color,
+      type: projType,
       description: desc.trim(),
       deadline: null,
       deadlineLabel: null,
@@ -400,8 +416,17 @@ function AddProjectModal({ onAdd, onClose }) {
                 style={{ width:18, height:18, borderRadius:'50%', background:c, border: color===c ? '2px solid var(--ink)' : '2px solid transparent', outline: color===c ? '2px solid '+c : 'none', outlineOffset:2, cursor:'pointer', flexShrink:0, padding:0 }} />
             ))}
           </div>
-          <span className="quick-add-hint"><kbd>Esc</kbd> to close</span>
-          <button type="submit" className="btn btn-primary btn-sm" style={{ marginLeft:'auto' }}>Add Project</button>
+          <div style={{ display:'flex', gap:3 }}>
+            {['work','personal'].map(t => (
+              <button key={t} type="button"
+                className={`pill btn-sm ${projType === t ? 'active' : ''}`}
+                onClick={() => setProjType(t)}
+                style={{ padding:'3px 9px', fontSize:11 }}
+              >{t}</button>
+            ))}
+          </div>
+          <span className="quick-add-hint" style={{ marginLeft:'auto' }}><kbd>Esc</kbd> to close</span>
+          <button type="submit" className="btn btn-primary btn-sm">Add Project</button>
         </div>
 
       </form>
@@ -409,4 +434,175 @@ function AddProjectModal({ onAdd, onClose }) {
   );
 }
 
-Object.assign(window, { TaskItem, RhythmBar, DetailPanel, QuickAddModal, AddProjectModal, weightColor });
+// ─── AICoach ───────────────────────────────────────────────────────────────────
+function AICoach({ tasks, projects }) {
+  const [apiKey,    setApiKey]    = React.useState(() => window.DEEPSEEK_KEY || localStorage.getItem('ds_key') || '');
+  const [keyDraft,  setKeyDraft]  = React.useState('');
+  const [msgs,      setMsgs]      = React.useState([]);
+  const [draft,     setDraft]     = React.useState('');
+  const [loading,   setLoading]   = React.useState(false);
+  const bodyRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+  }, [msgs, loading]);
+
+  // Auto-ask once on mount if key already saved
+  React.useEffect(() => {
+    if (localStorage.getItem('ds_key')) sendMsg('What should I focus on right now?', []);
+  }, []);
+
+  const buildContext = () => {
+    const active = tasks.filter(t => t.status !== 'done').slice(0, 15);
+    if (!active.length) return 'No active tasks right now.';
+    return active.map(t => {
+      const p = projects.find(p => p.id === t.projectId);
+      return `• "${t.title}" [project: ${p?.name || '—'}, due: ${t.due || 'none'}, priority: ${t.priority}, status: ${t.status}]`;
+    }).join('\n');
+  };
+
+  const sendMsg = async (text, currentMsgs) => {
+    const key = window.DEEPSEEK_KEY || localStorage.getItem('ds_key');
+    if (!key || !text.trim() || loading) return;
+
+    const next = [...currentMsgs, { role: 'user', content: text.trim() }];
+    setMsgs(next);
+    setDraft('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('https://api.deepseek.com/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a sharp, warm focus coach inside a task manager called Cadence.
+Your job: help the user decide which ONE task to work on right now.
+Be direct and concise — max 3 sentences per reply. No fluff.
+User's active tasks:\n${buildContext()}`,
+            },
+            ...next,
+          ],
+          max_tokens: 200,
+          temperature: 0.65,
+        }),
+      });
+      if (!res.ok) throw new Error(`API error ${res.status}`);
+      const data = await res.json();
+      setMsgs(prev => [...prev, { role: 'assistant', content: data.choices[0].message.content }]);
+    } catch (e) {
+      setMsgs(prev => [...prev, { role: 'assistant', content: `⚠ ${e.message}` }]);
+    }
+    setLoading(false);
+  };
+
+  const saveKey = () => {
+    const k = keyDraft.trim();
+    if (!k) return;
+    localStorage.setItem('ds_key', k);
+    setApiKey(k);
+    setKeyDraft('');
+    sendMsg('What should I focus on right now?', []);
+  };
+
+  const reset = () => {
+    localStorage.removeItem('ds_key');
+    setApiKey('');
+    setMsgs([]);
+  };
+
+  // ── No key yet: show setup ─────────────────────────────────────────────────
+  if (!apiKey) {
+    return (
+      <div className="ai-coach-card">
+        <div className="ai-coach-hd">
+          <span className="ai-coach-icon">◈</span>
+          <span className="ai-coach-title">Focus Coach</span>
+          <span className="ai-coach-badge">DeepSeek AI</span>
+        </div>
+        <div style={{ padding: '14px 16px' }}>
+          <p style={{ fontSize: 13, color: 'var(--ink3)', marginBottom: 12, lineHeight: 1.55 }}>
+            Connect DeepSeek to get a coach that tells you exactly which task to work on next.
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              type="password"
+              placeholder="sk-…"
+              value={keyDraft}
+              onChange={e => setKeyDraft(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && saveKey()}
+              className="qa-select"
+              style={{ flex: 1, fontSize: 13 }}
+              autoFocus
+            />
+            <button className="btn btn-primary btn-sm" onClick={saveKey} disabled={!keyDraft.trim()}>
+              Connect
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Has key: show chat ─────────────────────────────────────────────────────
+  return (
+    <div className="ai-coach-card">
+      <div className="ai-coach-hd">
+        <span className="ai-coach-icon">◈</span>
+        <span className="ai-coach-title">Focus Coach</span>
+        <span className="ai-coach-badge">DeepSeek AI</span>
+        <button onClick={reset}
+          style={{ marginLeft:'auto', background:'none', border:'none', cursor:'pointer', color:'var(--ink4)', fontSize:11 }}>
+          disconnect
+        </button>
+      </div>
+
+      <div className="ai-coach-body" ref={bodyRef}>
+        {msgs.length === 0 && !loading && (
+          <button className="btn btn-accent" style={{ width:'100%' }}
+            onClick={() => sendMsg('What should I focus on right now?', [])}>
+            ◎ Ask what to focus on
+          </button>
+        )}
+        {msgs.map((m, i) => {
+          if (i === 0 && m.role === 'user') return null;
+          return (
+            <div key={i} className={`ai-msg ai-msg-${m.role}`}>{m.content}</div>
+          );
+        })}
+        {loading && (
+          <div className="ai-msg ai-msg-assistant ai-thinking">
+            <span className="ai-dot"/><span className="ai-dot"/><span className="ai-dot"/>
+          </div>
+        )}
+      </div>
+
+      {msgs.length > 0 && (
+        <div style={{ padding:'0 16px 14px', display:'flex', gap:8 }}>
+          <input
+            placeholder="Ask a follow-up…"
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && draft.trim() && !loading) sendMsg(draft, msgs); }}
+            className="qa-select"
+            style={{ flex:1, fontSize:13 }}
+            disabled={loading}
+          />
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={() => sendMsg(draft, msgs)}
+            disabled={loading || !draft.trim()}
+          >↵</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+Object.assign(window, { TaskItem, RhythmBar, DetailPanel, QuickAddModal, AddProjectModal, weightColor, AICoach });

@@ -1313,6 +1313,144 @@ html, body, #root {
 .fade-in { animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
+/* ─── Time Mode ──────────────────────────────────────────────────────────────── */
+
+.mode-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.mode-chip-work     { background: var(--accent2-bg); color: var(--accent2); }
+.mode-chip-personal { background: var(--green-bg);   color: var(--green);   }
+.mode-chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mode-chip-work     .mode-chip-dot { background: var(--accent2); }
+.mode-chip-personal .mode-chip-dot { background: var(--green);   }
+
+.mode-now-pill {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+.mode-now-pill-work     { color: var(--accent2); background: var(--accent2-bg); }
+.mode-now-pill-personal { color: var(--green);   background: var(--green-bg);   }
+
+.mode-later-pill {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: 4px;
+  color: var(--ink4);
+  background: var(--bg3);
+}
+
+.task-type-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+.task-type-tag-work     { color: var(--accent2); background: var(--accent2-bg); }
+.task-type-tag-personal { color: var(--green);   background: var(--green-bg);   }
+
+/* ─── AI Focus Coach ─────────────────────────────────────────────────────────── */
+
+.ai-coach-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.ai-coach-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+.ai-coach-icon { font-size: 14px; color: var(--accent2); }
+.ai-coach-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink2);
+}
+.ai-coach-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  background: var(--accent2-bg);
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.ai-coach-body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.ai-msg {
+  font-size: 13.5px;
+  line-height: 1.6;
+  padding: 10px 14px;
+  border-radius: var(--r);
+  text-wrap: pretty;
+}
+.ai-msg-user {
+  background: var(--bg3);
+  color: var(--ink3);
+  font-size: 12.5px;
+  align-self: flex-end;
+  max-width: 82%;
+}
+.ai-msg-assistant {
+  background: var(--accent2-bg);
+  color: var(--ink2);
+  border-left: 3px solid var(--accent2);
+}
+.ai-thinking {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 14px;
+  min-height: 44px;
+}
+.ai-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent2);
+  animation: aiPulse 1.2s infinite ease-in-out;
+}
+.ai-dot:nth-child(2) { animation-delay: 0.2s; }
+.ai-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes aiPulse {
+  0%, 60%, 100% { opacity: 0.25; transform: scale(0.8); }
+  30%           { opacity: 1;    transform: scale(1.1); }
+}
+
 /* ─── Keyboard shortcut hint ─────────────────────────────────────────────────── */
 
 kbd {

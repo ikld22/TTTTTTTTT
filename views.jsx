@@ -7,7 +7,11 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
   const today = CADENCE_TODAY.toISOString().split('T')[0];
   const todayTasks = tasks.filter(t => t.today && t.status !== 'done');
   const overdueTasks = tasks.filter(t => isOverdue(t));
-  const focusTask = todayTasks.sort((a, b) => urgencyScore(b) - urgencyScore(a))[0];
+  const mode = getTimeMode();
+  const modeTasks  = todayTasks.filter(t => (t.type || 'work') === mode);
+  const laterTasks = todayTasks.filter(t => (t.type || 'work') !== mode);
+  const focusPool  = modeTasks.length ? modeTasks : todayTasks;
+  const focusTask  = [...focusPool].sort((a, b) => urgencyScore(b) - urgencyScore(a))[0];
 
   const daysToExam = daysUntil('2026-05-14');
   const doneTasks = tasks.filter(t => t.status === 'done');
@@ -24,7 +28,13 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
     <div className="fade-in">
       {/* Hero */}
       <div className="today-hero">
-        <div className="today-date">{dayName} · {dateLabel}</div>
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:6 }}>
+          <div className="today-date" style={{ marginBottom:0 }}>{dayName} · {dateLabel}</div>
+          <div className={`mode-chip mode-chip-${mode}`}>
+            <span className="mode-chip-dot" />
+            {mode === 'work' ? 'Work Mode · until 7 PM' : 'Personal Mode · until 10 AM'}
+          </div>
+        </div>
         <h1 className="today-headline">
           Ready for<br /><em>today.</em>
         </h1>
@@ -39,7 +49,7 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
       {focusTask && (
         <div className="focus-card" onClick={() => onSelect(focusTask)} style={{ cursor: 'pointer' }}>
           <div style={{ flex: 1 }}>
-            <div className="focus-label">One thing</div>
+            <div className="focus-label">{mode === 'work' ? 'Work focus' : 'Personal focus'}</div>
             <div className="focus-title">{focusTask.title}</div>
             <div className="focus-meta">
               {getProject(focusTask.projectId)?.name} · {formatDue(focusTask.due)}
@@ -54,6 +64,9 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
           </button>
         </div>
       )}
+
+      {/* AI Coach */}
+      <AICoach tasks={tasks} projects={projects} />
 
       {/* Insights */}
       <div className="insights-row">
@@ -93,11 +106,7 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
         </>
       )}
 
-      {/* Today */}
-      <div className="section-hd">
-        <span className="section-title">Today</span>
-        <span className="section-count">{todayTasks.length}</span>
-      </div>
+      {/* Today — split by mode */}
       {todayTasks.length === 0 ? (
         <div className="empty-state">
           <div className="empty-emoji">🎉</div>
@@ -105,12 +114,43 @@ function TodayView({ tasks, projects, onCheck, onStar, onSubtaskCheck, onSelect,
           <div className="empty-sub">Star tasks to add them here.</div>
         </div>
       ) : (
-        <div className={taskStyle === 'cards' ? 'task-cards' : 'task-list'}>
-          {todayTasks.map(t => (
-            <TaskItem key={t.id} task={t} project={getProject(t.projectId)}
-              {...taskProps} cardMode={taskStyle === 'cards'} />
-          ))}
-        </div>
+        <>
+          {modeTasks.length > 0 && (
+            <>
+              <div className="section-hd">
+                <span className="section-title">{mode === 'work' ? 'Work' : 'Personal'}</span>
+                <span className="section-count">{modeTasks.length}</span>
+                <span className={`mode-now-pill mode-now-pill-${mode}`}>now</span>
+              </div>
+              <div className={taskStyle === 'cards' ? 'task-cards' : 'task-list'}>
+                {modeTasks.map(t => (
+                  <TaskItem key={t.id} task={t} project={getProject(t.projectId)}
+                    {...taskProps} cardMode={taskStyle === 'cards'} />
+                ))}
+              </div>
+            </>
+          )}
+          {laterTasks.length > 0 && (
+            <>
+              <div className="section-hd">
+                <span className="section-title" style={{ opacity: modeTasks.length ? 0.5 : 1 }}>
+                  {mode === 'work' ? 'Personal' : 'Work'}
+                </span>
+                <span className="section-count" style={{ opacity: modeTasks.length ? 0.5 : 1 }}>
+                  {laterTasks.length}
+                </span>
+                {modeTasks.length > 0 && <span className="mode-later-pill">later</span>}
+              </div>
+              <div className={taskStyle === 'cards' ? 'task-cards' : 'task-list'}
+                style={{ opacity: modeTasks.length ? 0.6 : 1 }}>
+                {laterTasks.map(t => (
+                  <TaskItem key={t.id} task={t} project={getProject(t.projectId)}
+                    {...taskProps} cardMode={taskStyle === 'cards'} />
+                ))}
+              </div>
+            </>
+          )}
+        </>
       )}
     </div>
   );

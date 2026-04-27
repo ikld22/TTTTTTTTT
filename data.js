@@ -1,6 +1,6 @@
 // Cadence — sample data + localStorage persistence
 
-const TODAY = new Date(2026, 3, 26); // April 26, 2026
+const TODAY = new Date();
 const d = (offsetDays) => {
   const dt = new Date(TODAY);
   dt.setDate(dt.getDate() + offsetDays);
@@ -73,6 +73,11 @@ function urgencyScore(task) {
   return deadlinePressure + (priorityMap[task.priority] || 1) * 2 + (task.weight || 5);
 }
 
+function getTimeMode() {
+  const h = new Date().getHours();
+  return (h >= 10 && h < 19) ? 'work' : 'personal';
+}
+
 // Expose globally
 Object.assign(window, {
   CADENCE_TODAY: TODAY,
@@ -85,4 +90,5 @@ Object.assign(window, {
   formatDue,
   isOverdue,
   urgencyScore,
+  getTimeMode,
 });
